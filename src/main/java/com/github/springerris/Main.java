@@ -189,7 +189,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
 
         Random rd = new Random();
-
+        boolean itsOver = false;
         Scanner sc = new Scanner(System.in);
         int[][] grid = new int[WIDTH][HEIGHT];
         List<IndexPair> empty = new ArrayList<>();
@@ -212,26 +212,34 @@ public class Main {
                 }
                 System.out.println(Arrays.deepToString(testGrid));
                 if (!checkMoves(testGrid)) {
-                    drawGrid(grid);
-                    System.out.println("No more moves, you've lost!");
-                    break;
+                    itsOver = true;
                 };
             }
 
             if (moveGrid(in, grid,true)) moves++;
+
+            // for testing win condition
             //grid[0][0] = 1024;
             //grid[0][1] = 1024;
+
+            // for testing lose condition
             for (int i = 0; i < HEIGHT; i++) {
                 for (int j = 0; j < WIDTH; j++) {
                     grid[i][j]= 12;
 
                 }
             }
+
             System.out.println("Score: " + score);
             System.out.println("Moves: " + moves);
             drawGrid(grid);
             if (checkWinCon(grid)) {
                 System.out.println("Congratulations! You won in " + moves + " moves!");
+                break;
+            }
+            if (itsOver) {
+                System.out.println("No more moves, you've lost!");
+                break;
             }
 
             in = sc.next().charAt(0);
