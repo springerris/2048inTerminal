@@ -1,5 +1,7 @@
 package com.github.springerris;
 
+import org.jline.terminal.Terminal;
+
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.IntStream;
@@ -119,7 +121,13 @@ public class Main {
 
         }
 
+        // leftover from previous attempt to keep score
+        //int prev1 = 0;
+        //int prev2 = 0;
+
+
         for (int i = 0; i < endY; i++) {
+            boolean setFirstPrevs = false;
             for (int j = 0; j < endX; j++) {
                 //System.out.println();
                 //System.out.println((iConst+i*shiftY)*multX + " + " + (jConst+j*shiftX)*multY);
@@ -130,12 +138,22 @@ public class Main {
                 //System.out.println(finalJ);
                 int finalShiftX = shiftX*multX;
                 int finalShiftY = shiftY*multY;
+                // leftover from previous attempt to keep score
+//                if (!setFirstPrevs) {
+//                prev1 = grid[finalI][finalJ];
+//                prev2 = grid[finalI+finalShiftY][finalJ+finalShiftX];
+//                setFirstPrevs = true;
+//                }
                 if (IntStream.of(powers).anyMatch(x -> x == grid[finalI][finalJ]
                         + grid[finalI + finalShiftY][finalJ + finalShiftX])) {
                     //if (Arrays.asList(powers).contains((grid[finalI][finalJ] + grid[finalI][j+1]))) {
+                    int prev1 = grid[finalI][finalJ];
+
                     grid[finalI+finalShiftY][finalJ+finalShiftX] = grid[finalI+finalShiftY][finalJ+finalShiftX] + grid[finalI][finalJ];
-                    if (countScore) score = score + grid[finalI+finalShiftY][finalJ+finalShiftX];
+                    if (countScore && prev1 !=0 )
+                        score = score + grid[finalI+finalShiftY][finalJ+finalShiftX];
                     grid[finalI][finalJ] = 0;
+
                     somethingHapened = true;
                 }
                 else {
@@ -145,6 +163,9 @@ public class Main {
                         somethingHapened = true;
                     }
                 }
+                // leftover from previous attempt to keep score
+//                prev1 = grid[finalI][finalJ];
+//                prev2 = grid[finalI+finalShiftY][finalJ+finalShiftX];
             }
 
         }
@@ -187,7 +208,8 @@ public class Main {
     }
 
     public static void main(String[] args) throws IOException {
-
+        String OSNameLower = System.getProperty("os.name").toLowerCase(Locale.ROOT);
+        System.out.println(OSNameLower);
         Random rd = new Random();
         boolean itsOver = false;
         Scanner sc = new Scanner(System.in);
@@ -198,7 +220,10 @@ public class Main {
         char in = ' ';
         while (in != 'q') {
 
-            System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+
+            System.out.println(new char[] { (char) 0x1B, '[', '2', 'J' });
+            System.out.println(new char[] { (char) 0x1B, '[', '9', '9','9', 'C' });
+            System.out.println(new char[] { (char) 0x1B, '[', '9', '9','9', 'A' });
             countEmpty(grid,empty);
             //System.out.println(empty);
             Collections.shuffle(empty,rd);
@@ -223,12 +248,12 @@ public class Main {
             //grid[0][1] = 1024;
 
             // for testing lose condition
-            for (int i = 0; i < HEIGHT; i++) {
-                for (int j = 0; j < WIDTH; j++) {
-                    grid[i][j]= 12;
-
-                }
-            }
+//            for (int i = 0; i < HEIGHT; i++) {
+//                for (int j = 0; j < WIDTH; j++) {
+//                    grid[i][j]= 12;
+//
+//                }
+//            }
 
             System.out.println("Score: " + score);
             System.out.println("Moves: " + moves);
