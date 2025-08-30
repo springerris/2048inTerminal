@@ -147,16 +147,20 @@ public class Main {
                 if (IntStream.of(powers).anyMatch(x -> x == grid[finalI][finalJ]
                         + grid[finalI + finalShiftY][finalJ + finalShiftX])) {
                     //if (Arrays.asList(powers).contains((grid[finalI][finalJ] + grid[finalI][j+1]))) {
+
                     int prev1 = grid[finalI][finalJ];
+                    int prev2 = grid[finalI+finalShiftY][finalJ+finalShiftX];
 
                     grid[finalI+finalShiftY][finalJ+finalShiftX] = grid[finalI+finalShiftY][finalJ+finalShiftX] + grid[finalI][finalJ];
-                    if (countScore && prev1 !=0 )
-                        score = score + grid[finalI+finalShiftY][finalJ+finalShiftX];
+
                     grid[finalI][finalJ] = 0;
+                    if (countScore && prev2 != grid[finalI][finalJ] && prev1 != grid[finalI+finalShiftY][finalJ+finalShiftX])
+                        score = score + grid[finalI+finalShiftY][finalJ+finalShiftX];
 
                     somethingHapened = true;
                 }
                 else {
+                    //System.out.println("ELSE happened!!!");
                     if ( grid[finalI+finalShiftY][finalJ+finalShiftX] == 0) {
                         grid[finalI+finalShiftY][finalJ+finalShiftX] = grid[finalI][finalJ];
                         grid[finalI][finalJ] = 0;
@@ -211,6 +215,8 @@ public class Main {
         String OSNameLower = System.getProperty("os.name").toLowerCase(Locale.ROOT);
         System.out.println(OSNameLower);
         Random rd = new Random();
+        long seed = rd.nextLong();
+        rd.setSeed(seed);
         boolean itsOver = false;
         Scanner sc = new Scanner(System.in);
         int[][] grid = new int[WIDTH][HEIGHT];
@@ -220,10 +226,16 @@ public class Main {
         char in = ' ';
         while (in != 'q') {
 
-
-            System.out.println(new char[] { (char) 0x1B, '[', '2', 'J' });
-            System.out.println(new char[] { (char) 0x1B, '[', '9', '9','9', 'C' });
-            System.out.println(new char[] { (char) 0x1B, '[', '9', '9','9', 'A' });
+            if (OSNameLower.contains("window")) {
+                // ANSI on windows? lol
+                for (int i = 0; i < 50; i++) {
+                    System.out.print("\n");
+                }
+            } else {
+                System.out.println(new char[]{(char) 0x1B, '[', '2', 'J'});
+                System.out.println(new char[]{(char) 0x1B, '[', '9', '9', '9', 'C'});
+                System.out.println(new char[]{(char) 0x1B, '[', '9', '9', '9', 'A'});
+            }
             countEmpty(grid,empty);
             //System.out.println(empty);
             Collections.shuffle(empty,rd);
@@ -254,7 +266,7 @@ public class Main {
 //
 //                }
 //            }
-
+            System.out.println("Seed: " + seed);
             System.out.println("Score: " + score);
             System.out.println("Moves: " + moves);
             drawGrid(grid);
