@@ -208,12 +208,13 @@ public class Main {
                 }
             }
         }
-        System.out.println(testSum);
+        //System.out.println(testSum);
     }
 
     public static void main(String[] args) throws IOException {
+        boolean moveHappened = true;
         String OSNameLower = System.getProperty("os.name").toLowerCase(Locale.ROOT);
-        System.out.println(OSNameLower);
+        //System.out.println(OSNameLower);
         Random rd = new Random();
         long seed = rd.nextLong();
         rd.setSeed(seed);
@@ -221,9 +222,24 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         int[][] grid = new int[WIDTH][HEIGHT];
         List<IndexPair> empty = new ArrayList<>();
-
-        System.out.println("Hello and welcome!");
         char in = ' ';
+        System.out.println("Hello and welcome!");
+        System.out.println("Type w,a,s,d to move tiles in various directions, or q to end the game.");
+        System.out.println("Use random seed? Y/n");
+        in = sc.next().charAt(0);
+        if (in == 'n') {
+            System.out.println("Type in your seed (an integer)");
+            String strSeed = sc.next();
+            //System.out.println(strSeed);
+            try {
+                seed = Integer.parseInt(strSeed);
+                rd.setSeed(seed);
+            } catch (NumberFormatException nfe) {
+                System.out.println("Invalid seed input. Using random seed instead.");
+            }
+        }
+
+
         while (in != 'q') {
 
             if (OSNameLower.contains("window")) {
@@ -241,19 +257,20 @@ public class Main {
             Collections.shuffle(empty,rd);
             //System.out.println(empty);
             if (!empty.isEmpty()) {
-                grid[empty.get(0).y()][empty.get(0).x()] = 2;
+                if (moveHappened)
+                    grid[empty.get(0).y()][empty.get(0).x()] = 2;
             } else {
                 int [][] testGrid =  new int[WIDTH][HEIGHT];
                 for (int i = 0; i < WIDTH; i++) {
                     System.arraycopy(grid[i],0,testGrid[i],0,grid.length);
                 }
-                System.out.println(Arrays.deepToString(testGrid));
+                //System.out.println(Arrays.deepToString(testGrid));
                 if (!checkMoves(testGrid)) {
                     itsOver = true;
                 };
             }
-
-            if (moveGrid(in, grid,true)) moves++;
+            moveHappened = moveGrid(in, grid, true);
+            if (moveHappened) moves++;
 
             // for testing win condition
             //grid[0][0] = 1024;
@@ -266,6 +283,7 @@ public class Main {
 //
 //                }
 //            }
+
             System.out.println("Seed: " + seed);
             System.out.println("Score: " + score);
             System.out.println("Moves: " + moves);
